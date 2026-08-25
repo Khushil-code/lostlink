@@ -852,3 +852,166 @@ document.addEventListener(
         closeContactModal();
     }
 );
+// ==========================================
+// LOSTLINK AI SMART MATCH - GEMINI
+// ==========================================
+
+const aiMatchButton = document.getElementById("aiMatchBtn");
+
+if (aiMatchButton) {
+
+    aiMatchButton.addEventListener("click", async function () {
+
+        // Get Lost Item Information
+        const lostItem = {
+            name: document.getElementById("lostName").value.trim(),
+            category: document.getElementById("lostCategory").value.trim(),
+            description: document.getElementById("lostDescription").value.trim(),
+            location: document.getElementById("lostLocation").value.trim(),
+            date: document.getElementById("lostDate").value
+        };
+
+
+        // Get Found Item Information
+        const foundItem = {
+            name: document.getElementById("foundName").value.trim(),
+            category: document.getElementById("foundCategory").value.trim(),
+            description: document.getElementById("foundDescription").value.trim(),
+            location: document.getElementById("foundLocation").value.trim(),
+            date: document.getElementById("foundDate").value
+        };
+
+
+        // Check empty fields
+        if (
+            !lostItem.name ||
+            !lostItem.description ||
+            !foundItem.name ||
+            !foundItem.description
+        ) {
+
+            showAIResult(
+                "⚠️ Please enter the item name and description for both items.",
+                false
+            );
+
+            return;
+        }
+
+
+        // Loading state
+        aiMatchButton.disabled = true;
+        aiMatchButton.innerText =
+            "🤖 Gemini is analyzing...";
+
+
+        showAIResult(
+            "🤖 Gemini AI is comparing the two items...",
+            false
+        );
+
+
+        try {
+
+            // Send data to Vercel API
+            const response = await fetch("/api/match", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    lostItem: lostItem,
+                    foundItem: foundItem
+                })
+
+            });
+
+
+            const result = await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    result.error ||
+                    "AI matching failed."
+                );
+
+            }
+
+
+            // Display Gemini result
+            displayAIResult(result);
+
+
+        } catch (error) {
+
+            console.error("AI Error:", error);
+
+            showAIResult(
+                "❌ Unable to connect to Gemini AI. Please try again.",
+                false
+            );
+
+        }
+
+
+        // Restore button
+        aiMatchButton.disabled = false;
+        aiMatchButton.innerText =
+            "🤖 Find AI Match";
+
+    });
+
+}
+
+function displayAIResult(result) {
+    const resultBox =
+        document.getElementById("aiResult");
+    resultBox.classList.add("show");
+    const score =
+        Number(result.score) || 0;
+    let status;
+    if (score >= 80) {
+        status =
+            "🎯 Strong Possible Match";
+    } else if (score >= 60) {
+        status =
+            "🟡 Possible Match";
+    } else {
+        status =
+            "🔵 Low Match Probability";
+    }
+    resultBox.innerHTML = `
+        <h3>${status}</h3>
+        <div class="ai-score">
+            ${score}%
+        </div>
+        <p>
+            <strong>AI Match Score</strong>
+        </p>
+        <p class="ai-reason">
+            <strong>Gemini's Analysis:</strong><br>
+            ${escapeHTML(result.reason || "No reason provided.")}
+        </p>
+
+    `;
+}
+function showAIResult(message, showBox = true) {
+    const resultBox =
+        document.getElementById("aiResult");
+
+    resultBox.classList.add("show");
+    resultBox.innerHTML = `
+        <p>${message}</p>
+    `;
+}
+function escapeHTML(text) {
+    const div =
+        document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+}

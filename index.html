@@ -447,10 +447,78 @@
         </form>
     </div>
 </div>
+<section class="ai-section">
+    <h2>🤖 LostLink AI Smart Match</h2>
+    <p>
+        Let Gemini AI compare a lost item with a found item
+        and identify a possible match.
+    </p>
+    <div class="ai-form">
+        <div>
+            <h3>🔴 Lost Item</h3>
+            <input
+                type="text"
+                id="lostName"
+                placeholder="Item name"
+            >
+            <input
+                type="text"
+                id="lostCategory"
+                placeholder="Category"
+            >
+            <textarea
+                id="lostDescription"
+                placeholder="Describe the lost item"
+            ></textarea>
+            <input
+                type="text"
+                id="lostLocation"
+                placeholder="Lost location"
+            >
+            <input
+                type="date"
+                id="lostDate"
+            >
+        </div>
+        <div>
+            <h3>🟢 Found Item</h3>
+            <input
+                type="text"
+                id="foundName"
+                placeholder="Item name"
+            >
+            <input
+                type="text"
+                id="foundCategory"
+                placeholder="Category"
+            >
+            <textarea
+                id="foundDescription"
+                placeholder="Describe the found item"
+            ></textarea>
+            <input
+                type="text"
+                id="foundLocation"
+                placeholder="Found location"
+            >
+            <input
+                type="date"
+                id="foundDate"
+            >
+        </div>
+
+    </div>
+    <button id="aiMatchBtn">
+        🤖 Find AI Match
+    </button>
+    <div id="aiResult" class="ai-result"></div>
+
+</section>
 <div id="toast" class="toast">
     <span id="toastIcon">✅</span>
     <span id="toastMessage">Success</span>
 </div>
+<script src="script.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
